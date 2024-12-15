@@ -86,4 +86,35 @@ contract LendingStorageTest is Test {
 
         }
     }
+
+    function testFuzz_StoreData3() public { // SAME AS "2", git testing
+        uint8 _a = 1;
+        Lib.Data memory _testParam = Lib.Data(
+            _a,
+            1,
+            12345,
+            159
+        );
+        if(_a == 0){
+            lendingStorage.storeData(_testParam, address(0x123));
+            Lib.Data[] memory storedData = lendingStorage.getHistory(address(0x123));
+            assertEq(storedData[0].action, _testParam.action);
+            assertEq(storedData[0].token, _testParam.token);
+            assertEq(storedData[0].value, _testParam.value);
+            assertEq(storedData[0].date, _testParam.date);
+        } else if(_a == 1){
+            console.log("action = ", _a);
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    LendingStorage.InsufficientSupply.selector,
+                    1,
+                    0,
+                    12345
+                )
+            );
+            lendingStorage.storeData(_testParam, address(0x123));
+        } else{
+
+        }
+    }
 }
